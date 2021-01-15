@@ -1,0 +1,40 @@
+stages:
+  - build
+  - deploy
+
+default:
+  tags: [ docker-build, valeevgroup ] # build on our machine
+
+variables:
+  DEBIAN_FRONTEND : noninteractive
+
+# before_script:
+  #   - apt-get update && apt-get -y install build-essential docker.io
+  #   - nohup dockerd &
+
+.docker-build:
+  timeout: 3h
+  stage: build
+  only:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /\[docker-build\]/
+
+valeevgroup/ubuntu:18.04:
+  extends: .docker-build
+  script:
+    - cd docker-images
+    - make valeevgroup/ubuntu:18.04
+
+valeevgroup/ubuntu:20.04:
+  extends: .docker-build
+  script:
+    - cd docker-images
+    - make valeevgroup/ubuntu:20.04
+    - make valeevgroup/ubuntu latest=20.04
+
+# build/deploy:
+#   stage: build
+#   only:
+#     refs: [ master ] # only master branch
+#   script:
+#     - make push/latest
