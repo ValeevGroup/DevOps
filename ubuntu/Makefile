@@ -1,5 +1,5 @@
 ubuntu_codename ?= $(shell lsb_release -sc)
-libint2_version ?= 2.7.0-beta.6
+libint2_version ?= 2.7.0
 clang_version ?= 9
 cuda_version ?= 11.1
 
