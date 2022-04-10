@@ -17,6 +17,7 @@ intel_mkl_version ?= 2020.4-304
 intel_mkl := intel-mkl-\*-${intel_mkl_version}
 
 install/main:
+	add-apt-repository ppa:mhier/libboost-latest  # need boost 1.68+, but ubuntu 18 only provides boost 1.65
 	apt-get update
 	apt-get -yq install \
           lsb-release coreutils sudo bash-completion \
