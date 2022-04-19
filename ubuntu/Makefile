@@ -16,8 +16,7 @@ cuda_packages := cuda-minimal-build-${cuda_tag} \
 intel_mkl_version ?= 2020.4-304
 intel_mkl := intel-mkl-\*-${intel_mkl_version}
 
-install/main:
-	add-apt-repository ppa:mhier/libboost-latest  # need boost 1.68+, but ubuntu 18 only provides boost 1.65
+install/main: install/libboost-latest
 	apt-get update
 	apt-get -yq install \
           lsb-release coreutils sudo bash-completion \
@@ -26,7 +25,7 @@ install/main:
           build-essential wget curl \
           git make ninja-build \
           gcc g++ gfortran gdb valgrind \
-          libboost-all-dev libeigen3-dev \
+          libeigen3-dev \
           libblas-dev liblapack-dev liblapacke-dev \
           libunwind-dev libtbb-dev libomp-dev \
           libopenmpi-dev openmpi-bin libscalapack-openmpi-dev \
@@ -38,6 +37,14 @@ install/docker:
 
 install/g++-%:
 	apt-get -yq install gcc-$* g++-$* gfortran-$*
+
+install/add-apt-repository:
+	apt-get update
+	apt-get -yq install software-properties-common
+
+install/libboost-latest: install/add-apt-repository
+	add-apt-repository ppa:mhier/libboost-latest  # need boost 1.68+, but ubuntu 18 only provides boost 1.65
+	apt-get -yq install libboost1.74-dev
 
 # CMake
 install/cmake:
