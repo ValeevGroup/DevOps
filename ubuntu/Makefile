@@ -107,7 +107,8 @@ install/nvidia-docker:
 
 # Libint2
 libint2:
-	wget --no-verbose https://github.com/evaleev/libint/releases/download/v${libint2_version}/libint-${libint2_version}.tgz
+	#wget --no-verbose https://github.com/evaleev/libint/releases/download/v${libint2_version}/libint-${libint2_version}.tgz
+	wget --no-verbose -O libint-${libint2_version}.tgz "https://drive.google.com/uc?export=download&id=159sKKdUdi8WBN7JerG2XvwuHo8EAKNkH"
 	tar xzf libint-${libint2_version}.tgz
 	mkdir libint2
 	cd libint2 && cmake ../libint-${libint2_version} -DCMAKE_POSITION_INDEPENDENT_CODE=ON
