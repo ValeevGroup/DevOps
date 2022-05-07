@@ -1,7 +1,7 @@
 ubuntu_codename ?= $(shell lsb_release -sc)
 libint2_version ?= 2.7.1
 clang_version ?= 9
-cuda_version ?= 11.1
+cuda_version ?= 11.6
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -82,7 +82,10 @@ install/intel-mkl:
 # CUDA
 apt-add-repository/cuda:
 	wget ${cuda_repo}/cuda-ubuntu$(subst .,,${ubuntu_release}).pin -O /etc/apt/preferences.d/cuda-repository-pin-600
-	apt-key adv --fetch-keys ${cuda_repo}/7fa2af80.pub
+	wget ${cuda_repo}/cuda-keyring_1.0-1_all.deb -O /tmp/cuda-keyring.deb
+	sudo dpkg -i /tmp/cuda-keyring.deb
+	rm /tmp/cuda-keyring.deb
+	#apt-key adv --fetch-keys ${cuda_repo}/7fa2af80.pub
 	add-apt-repository "deb ${cuda_repo} /"
 	apt-get update
 
