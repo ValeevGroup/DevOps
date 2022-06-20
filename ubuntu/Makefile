@@ -1,5 +1,5 @@
 ubuntu_codename ?= $(shell lsb_release -sc)
-libint2_version ?= 2.7.1
+libint2_version ?= 2.7.2
 clang_version ?= 9
 cuda_version ?= 11.6
 
@@ -110,9 +110,9 @@ install/nvidia-docker:
 
 # Libint2
 libint2:
-	#wget --no-verbose https://github.com/evaleev/libint/releases/download/v${libint2_version}/libint-${libint2_version}.tgz
-	wget --no-verbose -O libint-${libint2_version}.tgz "https://drive.google.com/uc?export=download&id=159sKKdUdi8WBN7JerG2XvwuHo8EAKNkH"
-	tar xzf libint-${libint2_version}.tgz
+	wget --no-verbose https://github.com/evaleev/libint/releases/download/v${libint2_version}/libint-${libint2_version}-mpqc4.tgz
+	#wget --no-verbose -O libint-${libint2_version}.tgz "https://drive.google.com/uc?export=download&id=159sKKdUdi8WBN7JerG2XvwuHo8EAKNkH"
+	tar xzf libint-${libint2_version}-mpqc4.tgz
 	mkdir libint2
 	cd libint2 && cmake ../libint-${libint2_version} -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 	cd libint2 && make -j16
