@@ -32,11 +32,6 @@ RUN make apt-add-repository/intel-mkl && \
     make download/intel-mkl
 # RUN make /home/ValeevGroup/ install/intel-mkl
 
-# Add CUDA repo, download, but don't install
-RUN make apt-add-repository/cuda && \
-    make download/cuda
-# RUN make install/cuda
-
 # libint
 RUN make install/libint2 && \
     rm -fr /home/ValeevGroup/libint2
