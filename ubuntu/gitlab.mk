@@ -29,7 +29,7 @@ gitlab-runner/register/docker:
 	sudo ${gitlab-runner-register} \
   --env CMAKE_BUILD_PARALLEL_LEVEL=${CMAKE_BUILD_PARALLEL_LEVEL} \
   --env CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} \
-  --docker-runtime nvidia --env NVIDIA_VISIBLE_DEVICES=all \ # --gpus not available yet
+  --docker-runtime nvidia --env NVIDIA_VISIBLE_DEVICES=all --docker-gpus all \
   --executor docker \
   --tag-list docker,valeevgroup \
   --docker-pull-policy always \
