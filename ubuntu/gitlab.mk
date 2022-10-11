@@ -23,7 +23,7 @@ gitlab-runner/install: /usr/bin/curl
 gitlab-runner/register/shell:
 	sudo ${gitlab-runner-register} \
    --executor shell \
-   --tag-list shell,valeevgroup
+   --tag-list shell,valeevgroup,cuda
 
 gitlab-runner/register/docker:
 	sudo ${gitlab-runner-register} \
@@ -31,7 +31,7 @@ gitlab-runner/register/docker:
   --env CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} \
   --docker-runtime nvidia --env NVIDIA_VISIBLE_DEVICES=all --docker-gpus all \
   --executor docker \
-  --tag-list docker,valeevgroup \
+  --tag-list docker,valeevgroup,cuda \
   --docker-pull-policy always \
   --docker-image valeevgroup/ubuntu
 	echo "Make sure docker.io is installed: make install/docker"
