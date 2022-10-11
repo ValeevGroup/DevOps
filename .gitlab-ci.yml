@@ -23,17 +23,14 @@ valeevgroup/ubuntu:18.04:
   extends: .docker-build
   script:
     - cd docker-images
-    - make valeevgroup/ubuntu:18.04-base
-    - make valeevgroup/ubuntu:18.04-cuda
+    - make valeevgroup/ubuntu:18.04
 
 valeevgroup/ubuntu:20.04:
   extends: .docker-build
   script:
     - cd docker-images
-    - make valeevgroup/ubuntu:20.04-base
-    - make valeevgroup/ubuntu:20.04-cuda
-    - make valeevgroup/ubuntu-base latest=20.04
-    - make valeevgroup/ubuntu-cuda latest=20.04
+    - make valeevgroup/ubuntu:20.04
+    - make valeevgroup/ubuntu latest=20.04
 
 # build/deploy:
 #   stage: build

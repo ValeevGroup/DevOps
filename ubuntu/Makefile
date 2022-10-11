@@ -2,7 +2,6 @@ ubuntu_codename ?= $(shell lsb_release -sc)
 libint2_version ?= 2.7.2
 clang_version ?= 9
 cuda_version ?= 11.6
-cuda_driver_version ?= 510  # must match the deriver on the host
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -80,7 +79,27 @@ install/intel-mkl:
 	ln -s /opt/intel/compilers_and_libraries_$(subst -,.,${intel_mkl_version})/linux/mkl /opt/intel/mkl
 	test -x /opt/intel/mkl/bin/mklvars.sh
 
-# CUDA, host-only stuff, nothing to be done in the container
+# CUDA
+apt-add-repository/cuda:
+	wget ${cuda_repo}/cuda-ubuntu$(subst .,,${ubuntu_release}).pin -O /etc/apt/preferences.d/cuda-repository-pin-600
+	wget ${cuda_repo}/cuda-keyring_1.0-1_all.deb -O /tmp/cuda-keyring.deb
+	sudo dpkg -i /tmp/cuda-keyring.deb
+	rm /tmp/cuda-keyring.deb
+	#apt-key adv --fetch-keys ${cuda_repo}/7fa2af80.pub
+	add-apt-repository "deb ${cuda_repo} /"
+	apt-get update
+
+download/cuda:
+	apt-get install -yq --download-only ${cuda_packages}
+
+install/cuda: download/cuda
+	apt-get install -yq ${cuda_packages}
+	rm -fr /usr/local/cuda
+	ln -s /usr/local/cuda-$(subst -,.,${cuda_tag}) /usr/local/cuda
+	rm -fr /usr/local/bin/nvcc
+	# NB /usr/local/cuda/bin/nvcc symlink breaks CMake
+	#ln -s /usr/local/cuda/bin/nvcc /usr/local/bin/nvcc
+
 install/nvidia-docker:
 	test -x `which curl`
 	curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
