@@ -1,4 +1,4 @@
-CMAKE_BUILD_PARALLEL_LEVEL ?= 4
+CORES_PER_JOB ?= 4
 GITLAB_CONCURRENT ?= 6
 
 gitlab-runner-register = gitlab-runner register \
@@ -26,10 +26,9 @@ gitlab-runner/register/shell:
 
 gitlab-runner/register/docker:
 	sudo ${gitlab-runner-register} \
-  --env CMAKE_BUILD_PARALLEL_LEVEL=${CMAKE_BUILD_PARALLEL_LEVEL} \
   --env NVIDIA_VISIBLE_DEVICES=all \
   --docker-runtime nvidia \
-  --docker-cpus "4" \
+  --docker-cpus "${CORES_PER_JOB}" \
   --docker-gpus all \
   --executor docker \
   --tag-list docker,valeevgroup,cuda,linux \
