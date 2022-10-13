@@ -26,6 +26,7 @@ gitlab-runner/register/shell:
 
 gitlab-runner/register/docker:
 	sudo ${gitlab-runner-register} \
+  --env CMAKE_BUILD_PARALLEL_LEVEL=${CORES_PER_JOB} \
   --env NVIDIA_VISIBLE_DEVICES=all \
   --docker-runtime nvidia \
   --docker-cpus "${CORES_PER_JOB}" \
