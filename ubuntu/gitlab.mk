@@ -1,5 +1,4 @@
 CMAKE_BUILD_PARALLEL_LEVEL ?= 1
-CUDA_VISIBLE_DEVICES ?= ""
 GITLAB_CONCURRENT ?= 1
 
 gitlab-runner-register = gitlab-runner register \
@@ -28,8 +27,9 @@ gitlab-runner/register/shell:
 gitlab-runner/register/docker:
 	sudo ${gitlab-runner-register} \
   --env CMAKE_BUILD_PARALLEL_LEVEL=${CMAKE_BUILD_PARALLEL_LEVEL} \
-  --env CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES} \
-  --docker-runtime nvidia --env NVIDIA_VISIBLE_DEVICES=all --docker-gpus all \
+  --env NVIDIA_VISIBLE_DEVICES=all \
+  --docker-runtime nvidia \
+  --docker-gpus all \
   --executor docker \
   --tag-list docker,valeevgroup,cuda,linux \
   --docker-pull-policy always \
