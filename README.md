@@ -3,4 +3,4 @@ This repo contains scripts for building VG containers used for TA and MPQC CI. T
 
 # How
 - Authenticate with Docker Hub: `docker login -u <docker.com username>`
-- Build and push: `cd docker-images && make push/latest`
+- Build and push: `cd docker-images && make push/all`
