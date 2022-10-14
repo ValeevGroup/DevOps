@@ -1,4 +1,4 @@
-CORES_PER_JOB ?= 4
+CORES_PER_JOB ?= 3
 GITLAB_CONCURRENT ?= 6
 
 gitlab-runner-register = gitlab-runner register \
