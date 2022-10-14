@@ -30,7 +30,7 @@ install/main: install/libboost-latest
           libunwind-dev libtbb-dev libomp-dev \
           libopenmpi-dev openmpi-bin libscalapack-openmpi-dev \
           python3 python3-pip python3-numpy python3-dev python3-pytest \
-          vim emacs-nox
+          vim emacs-nox ccache
 
 install/docker:
 	sudo apt-get install docker.io
