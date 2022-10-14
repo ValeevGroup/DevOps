@@ -34,6 +34,8 @@ gitlab-runner/register/docker:
   --executor docker \
   --tag-list docker,valeevgroup,cuda,linux \
   --docker-pull-policy always \
+  --docker-volumes "/cache" \
+  --docker-volumes "/root/.ccache:/root/.ccache:rw" \
   --docker-image valeevgroup/ubuntu
 	echo "Make sure docker.io is installed: make install/docker"
 	echo "Make sure nvidia-docker is installed: make install/nvidia-docker"
