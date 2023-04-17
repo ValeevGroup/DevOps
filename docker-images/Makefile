@@ -21,4 +21,4 @@ all/tar: $(ALL:%=%.tar)
 push/%: ${repo}/ubuntu\:%
 	docker push $?
 
-push/all: push/latest push/18.04 push/20.04
+push/all: push/18.04 push/20.04
