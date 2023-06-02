@@ -19,18 +19,18 @@ variables:
     variables:
       - $CI_COMMIT_MESSAGE =~ /\[docker-build\]/
 
-valeevgroup/ubuntu:18.04:
+valeevgroup/ubuntu:22.04:
   extends: .docker-build
   script:
     - cd docker-images
-    - make valeevgroup/ubuntu:18.04
+    - make valeevgroup/ubuntu:22.04
+    - make valeevgroup/ubuntu latest=20.04
 
 valeevgroup/ubuntu:20.04:
   extends: .docker-build
   script:
     - cd docker-images
     - make valeevgroup/ubuntu:20.04
-    - make valeevgroup/ubuntu latest=20.04
 
 # build/deploy:
 #   stage: build
