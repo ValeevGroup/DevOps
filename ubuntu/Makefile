@@ -42,9 +42,8 @@ install/add-apt-repository:
 	apt-get update
 	apt-get -yq install software-properties-common
 
-install/libboost-latest: install/add-apt-repository
-	add-apt-repository ppa:mhier/libboost-latest  # need boost 1.68+, but ubuntu 18 only provides boost 1.65
-	apt-get -yq install libboost1.74-dev
+install/libboost-latest:
+	apt-get -yq install libboost-all-dev
 
 # CMake
 install/cmake:
