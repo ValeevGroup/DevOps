@@ -1,7 +1,7 @@
 ubuntu_codename ?= $(shell lsb_release -sc)
 libint2_version ?= 2.7.2
 clang_version ?= 13
-cuda_version ?= 11.6
+cuda_version ?= 12.1
 
 export DEBIAN_FRONTEND=noninteractive
 
