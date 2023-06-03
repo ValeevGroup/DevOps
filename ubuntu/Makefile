@@ -58,7 +58,7 @@ install/clang-%:
 	wget https://apt.llvm.org/llvm-snapshot.gpg.key -O - | apt-key add -
 	add-apt-repository "deb http://apt.llvm.org/${ubuntu_codename}/ llvm-toolchain-${ubuntu_codename}-$* main"
 	apt-get -yq update
-	apt-get -yq install clang-$*
+	apt-get -yq install clang-$* libomp-$*-dev
 
 install/clang: install/clang-${clang_version}
 
