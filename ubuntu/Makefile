@@ -1,11 +1,18 @@
 ubuntu_codename ?= $(shell lsb_release -sc)
+ubuntu_release = $(shell lsb_release -sr)
 libint2_version ?= 2.7.2
 clang_version ?= 13
 cuda_version ?= 12.1
 
 export DEBIAN_FRONTEND=noninteractive
 
-ubuntu_release = $(shell lsb_release -sr)
+ifeq ($(origin gcc_version), undefined)
+  ifeq ($ubuntu_codename, jammy)
+	gcc_version = 13
+  else
+    gcc_version = 10
+  endif
+endif
 
 cuda_repo = https://developer.download.nvidia.com/compute/cuda/repos/ubuntu$(subst .,,${ubuntu_release})/x86_64
 cuda_tag := $(subst .,-,${cuda_version})
@@ -16,7 +23,7 @@ cuda_packages := cuda-minimal-build-${cuda_tag} \
 intel_mkl_version ?= 2020.4-304
 intel_mkl := intel-mkl-\*-${intel_mkl_version}
 
-install/main: install/libboost-latest
+install/main: install/libboost-latest install/gcc-${gcc_version}
 	apt-get update
 	apt-get -yq install \
           lsb-release coreutils sudo bash-completion \
@@ -24,7 +31,7 @@ install/main: install/libboost-latest
           linux-tools-common time pciutils \
           build-essential wget curl \
           git make ninja-build \
-          gcc g++ gfortran gdb valgrind \
+          gdb valgrind \
           libeigen3-dev \
           libblas-dev liblapack-dev liblapacke-dev \
           libunwind-dev libtbb-dev libomp-dev \
@@ -35,7 +42,7 @@ install/main: install/libboost-latest
 install/docker:
 	sudo apt-get install docker.io
 
-install/g++-%:
+install/gcc-%:
 	apt-get -yq install gcc-$* g++-$* gfortran-$*
 
 install/add-apt-repository:
