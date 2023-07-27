@@ -7,8 +7,8 @@ cuda_version ?= 12.1
 export DEBIAN_FRONTEND=noninteractive
 
 ifeq ($(origin gcc_version), undefined)
-  ifeq ($ubuntu_codename, jammy)
-	gcc_version = 13
+  ifeq (${ubuntu_codename}, jammy)
+    gcc_version = 12
   else
     gcc_version = 10
   endif
@@ -23,7 +23,7 @@ cuda_packages := cuda-minimal-build-${cuda_tag} \
 intel_mkl_version ?= 2020.4-304
 intel_mkl := intel-mkl-\*-${intel_mkl_version}
 
-install/main: install/libboost-latest install/gcc-${gcc_version}
+install/main: install/libboost-latest install/gcc
 	apt-get update
 	apt-get -yq install \
           lsb-release coreutils sudo bash-completion \
@@ -44,6 +44,9 @@ install/docker:
 
 install/gcc-%:
 	apt-get -yq install gcc-$* g++-$* gfortran-$*
+
+install/gcc: install/gcc-${gcc_version}
+
 
 install/add-apt-repository:
 	apt-get update
