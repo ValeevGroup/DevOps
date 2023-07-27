@@ -1,5 +1,5 @@
-ubuntu_codename ?= $(shell lsb_release -sc)
-ubuntu_release = $(shell lsb_release -sr)
+ubuntu_codename ?= $(shell cat /etc/os-release | grep UBUNTU_CODENAME= | sed 's/UBUNTU_CODENAME=//g' )
+ubuntu_release ?= $(shell cat /etc/os-release | grep VERSION_ID= | sed 's/VERSION_ID=//g' | sed 's/"//g' )
 libint2_version ?= 2.7.2
 clang_version ?= 13
 cuda_version ?= 12.1
