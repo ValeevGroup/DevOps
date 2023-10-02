@@ -23,8 +23,7 @@ cuda_packages := cuda-minimal-build-${cuda_tag} \
                  libcusparse-${cuda_tag} libcusparse-dev-${cuda_tag} \
                  libnvjitlink-${cuda_tag} libnvjitlink-dev-${cuda_tag}
 
-intel_mkl_version ?= 2020.4-304
-intel_mkl := intel-mkl-\*-${intel_mkl_version}
+intel_mkl := intel-oneapi-mkl
 
 install/main: install/libboost-latest install/gcc
 	apt-get update
@@ -78,8 +77,8 @@ install/clang: install/clang-${clang_version}
 
 # Intel
 apt-add-repository/intel-mkl:
-	wget -O - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | apt-key add -
-	apt-add-repository "deb https://apt.repos.intel.com/mkl all main"
+	wget -O - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+	echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneAPI.list
 	apt-get -yq update
 
 download/intel-mkl:
@@ -87,9 +86,7 @@ download/intel-mkl:
 
 install/intel-mkl:
 	apt-get -yq install ${intel_mkl}
-	rm -rf /opt/intel/mkl
-	ln -s /opt/intel/compilers_and_libraries_$(subst -,.,${intel_mkl_version})/linux/mkl /opt/intel/mkl
-	test -x /opt/intel/mkl/bin/mklvars.sh
+	test -x /opt/intel/oneapi/mkl/latest/env/vars.sh
 
 # CUDA
 apt-add-repository/cuda:
