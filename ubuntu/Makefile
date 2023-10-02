@@ -19,7 +19,9 @@ cuda_tag := $(subst .,-,${cuda_version})
 cuda_packages := cuda-minimal-build-${cuda_tag} \
                  cuda-nvtx-${cuda_tag} cuda-nvprof-${cuda_tag} \
                  libcublas-${cuda_tag} libcublas-dev-${cuda_tag} \
-                 libcusolver-${cuda_tag} libcusolver-dev-${cuda_tag}
+                 libcusolver-${cuda_tag} libcusolver-dev-${cuda_tag} \
+                 libcusparse-${cuda_tag} libcusparse-dev-${cuda_tag} \
+                 libnvjitlink-${cuda_tag} libnvjitlink-dev-${cuda_tag}
 
 intel_mkl_version ?= 2020.4-304
 intel_mkl := intel-mkl-\*-${intel_mkl_version}
