@@ -23,7 +23,8 @@ cuda_packages := cuda-minimal-build-${cuda_tag} \
                  libcusparse-${cuda_tag} libcusparse-dev-${cuda_tag} \
                  libnvjitlink-${cuda_tag} libnvjitlink-dev-${cuda_tag}
 
-intel_mkl := intel-oneapi-mkl
+# N.B. important to install devel package to make the libraries discoverable by the wfn91 linalg cmake kit
+intel_mkl := intel-oneapi-mkl-devel
 
 install/main: install/libboost-latest install/gcc
 	apt-get update
