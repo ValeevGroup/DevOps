@@ -78,7 +78,7 @@ install/clang: install/clang-${clang_version}
 
 # Intel
 apt-add-repository/intel-mkl:
-	wget -O - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB | apt-key add -
+	wget -O - https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | apt-key add -
 	apt-add-repository "deb https://apt.repos.intel.com/mkl all main"
 	apt-get -yq update
 
