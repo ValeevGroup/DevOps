@@ -1943,8 +1943,8 @@ init_compute2_ptrs() {
 }
 }  // namespace detail
 
-__libint2_engine_inline const std::vector<Engine::compute2_ptr_type> &
-Engine::compute2_ptrs() const {
+__libint2_engine_inline const std::vector<Engine::compute2_ptr_type>
+    &Engine::compute2_ptrs() const {
   static std::vector<compute2_ptr_type> compute2_ptrs_ =
       detail::init_compute2_ptrs();
   return compute2_ptrs_;

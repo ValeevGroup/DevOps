@@ -2,7 +2,7 @@
 
 # these are the versions of clang-format that are supported required
 supported_clang_format_versions="16 17"
-preferred_clang_format_version=""  # prefer most recern supported clang-format versions
+preferred_clang_format_version=""  # prefer most recent supported clang-format version
 for v in $supported_clang_format_versions; do
   preferred_clang_format_version=$v
 done
