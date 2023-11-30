@@ -55,11 +55,18 @@ install/add-apt-repository:
 	apt-get update
 	apt-get -yq install software-properties-common
 
+ifeq (${ubuntu_codename}, jammy)
 install/libboost-latest:
 	apt-get -yq install libboost-all-dev
+else
+install/libboost-latest: install/add-apt-repository
+	add-apt-repository -y ppa:mhier/libboost-latest
+	apt-get update
+	apt-get -yq install libboost1.81-all-dev
+endif
 
 # CMake
-install/cmake:
+install/cmake: install/add-apt-repository
 	wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc | apt-key add -
 	apt-add-repository "deb https://apt.kitware.com/ubuntu/ ${ubuntu_codename} main"
 	apt-get -yq update
@@ -67,7 +74,7 @@ install/cmake:
 
 
 # LLVM
-install/clang-%:
+install/clang-%: install/add-apt-repository
 	wget https://apt.llvm.org/llvm-snapshot.gpg.key -O - | apt-key add -
 	add-apt-repository "deb http://apt.llvm.org/${ubuntu_codename}/ llvm-toolchain-${ubuntu_codename}-$* main"
 	apt-get -yq update
