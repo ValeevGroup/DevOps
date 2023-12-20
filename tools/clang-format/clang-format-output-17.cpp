@@ -180,6 +180,24 @@ enum fooE {
   WEDNESDAY = TUESDAY + 1
 } foo_e;
 
+struct fooOp {
+  template <typename T>
+  fooOp &operator&(const T &i) {
+    std::cout << std::forward<T>(t);
+    return *this;
+  }
+  void dump() { *this & 1 & 2 & 3 & "4" & 5.0f & i_ & d_ & f_ & s_; }
+  int i_;
+  double d_;
+  float f_;
+  std::string s_;
+};
+void useFooOp() {
+  fooOp x;
+  int i;
+  x & 1 & 2 & 3 & "4" & 5.0f & i;
+}
+
 // Wrapping and Braces
 
 #include <stdio.h>
