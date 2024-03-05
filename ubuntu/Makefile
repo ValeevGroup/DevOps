@@ -55,15 +55,11 @@ install/add-apt-repository:
 	apt-get update
 	apt-get -yq install software-properties-common
 
-ifeq (${ubuntu_codename}, jammy)
-install/libboost-latest:
-	apt-get -yq install libboost-all-dev
-else
+# VRG stack requires Boost 1.81 or later now, so stock Boost no longer suffices
 install/libboost-latest: install/add-apt-repository
 	add-apt-repository -y ppa:mhier/libboost-latest
 	apt-get update
 	apt-get -yq install libboost1.81-all-dev
-endif
 
 # CMake
 install/cmake: install/add-apt-repository
