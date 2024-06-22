@@ -27,10 +27,10 @@ RUN make install/main && \
     make install/clang && \
     apt-get clean
 
-# Add MKL repo, download, but don't install
+# Add MKL repo, download, and install
 RUN make apt-add-repository/intel-mkl && \
-    make download/intel-mkl
-# RUN make /home/ValeevGroup/ install/intel-mkl
+    make download/intel-mkl && \
+    make install/intel-mkl
 
 # Add CUDA repo, download, but don't install
 RUN make apt-add-repository/cuda && \
