@@ -1,9 +1,8 @@
-CORES_PER_JOB ?= 3
-GITLAB_CONCURRENT ?= 6
+CORES_PER_JOB ?= 12
+GITLAB_CONCURRENT ?= 4
 
 gitlab-runner-register = gitlab-runner register \
-  --url https://gitlab.com \
-  --locked=false
+  --url https://gitlab.com
 
 gitlab-runner/purge:
 	sudo apt purge gitlab-runner
@@ -28,17 +27,16 @@ gitlab-runner/register/docker:
 	sudo ${gitlab-runner-register} \
   --env CMAKE_BUILD_PARALLEL_LEVEL=${CORES_PER_JOB} \
   --env NVIDIA_VISIBLE_DEVICES=all \
+  --executor docker \
   --docker-runtime nvidia \
   --docker-cpus "${CORES_PER_JOB}" \
   --docker-gpus all \
-  --executor docker \
-  --tag-list docker,valeevgroup,cuda,linux \
   --docker-pull-policy always \
   --docker-volumes "/cache" \
   --docker-volumes "/root/.ccache:/root/.ccache:rw" \
   --docker-image valeevgroup/ubuntu
 	echo "Make sure docker.io is installed: make install/docker"
-	echo "Make sure nvidia-docker is installed: make install/nvidia-docker"
+	echo "Make sure nvidia-docker is installed: make install/nvidia-container-runtime"
 
 gitlab-runner/unregister/all:
 	sudo gitlab-runner unregister --all-runners

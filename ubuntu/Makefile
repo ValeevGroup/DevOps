@@ -21,7 +21,8 @@ cuda_packages := cuda-minimal-build-${cuda_tag} \
                  libcublas-${cuda_tag} libcublas-dev-${cuda_tag} \
                  libcusolver-${cuda_tag} libcusolver-dev-${cuda_tag} \
                  libcusparse-${cuda_tag} libcusparse-dev-${cuda_tag} \
-                 libnvjitlink-${cuda_tag} libnvjitlink-dev-${cuda_tag}
+                 libnvjitlink-${cuda_tag} libnvjitlink-dev-${cuda_tag} \
+                 cuda-drivers
 
 # N.B. important to install devel package to make the libraries discoverable by the wfn91 linalg cmake kit
 intel_mkl := intel-oneapi-mkl-devel
@@ -113,13 +114,18 @@ install/cuda: download/cuda
 	# NB /usr/local/cuda/bin/nvcc symlink breaks CMake
 	#ln -s /usr/local/cuda/bin/nvcc /usr/local/bin/nvcc
 
-install/nvidia-docker:
+install/nvidia-container-toolkit:
 	test -x `which curl`
-	curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
-	curl -s -L https://nvidia.github.io/nvidia-docker/ubuntu${ubuntu_release}/nvidia-docker.list \
-          | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+	curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+	curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list \
+          | sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' \
+          | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 	sudo apt-get update
-	sudo apt-get install -y nvidia-docker2
+	sudo apt-get install -y nvidia-container-toolkit
+	sudo nvidia-ctk runtime configure --runtime=docker
+	sudo systemctl restart docker
+	# sudo nvidia-ctk runtime configure --runtime=containerd
+	# sudo systemctl restart containerd
 
 # Libint2
 libint2:
