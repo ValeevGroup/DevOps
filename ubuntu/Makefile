@@ -1,18 +1,9 @@
 ubuntu_codename ?= $(shell cat /etc/os-release | grep UBUNTU_CODENAME= | sed 's/UBUNTU_CODENAME=//g' )
 ubuntu_release ?= $(shell cat /etc/os-release | grep VERSION_ID= | sed 's/VERSION_ID=//g' | sed 's/"//g' )
 libint2_version ?= 2.9.0
-clang_version ?= 13
-cuda_version ?= 12.1
+cuda_version ?= 12.6
 
 export DEBIAN_FRONTEND=noninteractive
-
-ifeq ($(origin gcc_version), undefined)
-  ifeq (${ubuntu_codename}, jammy)
-    gcc_version = 12
-  else
-    gcc_version = 10
-  endif
-endif
 
 cuda_repo = https://developer.download.nvidia.com/compute/cuda/repos/ubuntu$(subst .,,${ubuntu_release})/x86_64
 cuda_tag := $(subst .,-,${cuda_version})
@@ -21,14 +12,14 @@ cuda_packages := cuda-minimal-build-${cuda_tag} \
                  libcublas-${cuda_tag} libcublas-dev-${cuda_tag} \
                  libcusolver-${cuda_tag} libcusolver-dev-${cuda_tag} \
                  libcusparse-${cuda_tag} libcusparse-dev-${cuda_tag} \
-                 libnvjitlink-${cuda_tag} libnvjitlink-dev-${cuda_tag} \
-                 cuda-drivers
+                 libnvjitlink-${cuda_tag} libnvjitlink-dev-${cuda_tag}
+
 
 # N.B. important to install devel package to make the libraries discoverable by the wfn91 linalg cmake kit
 intel_mkl := intel-oneapi-mkl-devel
 
-install/main: install/libboost-latest install/gcc
-	apt-get update
+install/core:
+	apt-get -yq update
 	apt-get -yq install \
           lsb-release coreutils sudo bash-completion \
           apt-transport-https software-properties-common ca-certificates gnupg \
@@ -43,44 +34,41 @@ install/main: install/libboost-latest install/gcc
           python3 python3-pip python3-numpy python3-dev python3-pytest \
           vim emacs-nox ccache
 
-install/docker:
-	# snapd fucks up docker socket for nvidia
-	sudo dpkg -P snapd
-	sudo apt-get install docker.io
+install/main/noble: install/core install/g++ install/clang++ install/g++-14
+	apt-get -yq install libboost-all-dev
 
-install/gcc-%:
-	apt-get -yq install gcc-$* g++-$* gfortran-$*
-
-install/gcc: install/gcc-${gcc_version}
-
-
-install/add-apt-repository:
-	apt-get update
-	apt-get -yq install software-properties-common
-
-# VRG stack requires Boost 1.81 or later now, so stock Boost no longer suffices
-install/libboost-latest: install/add-apt-repository
+# VRG stack requires Boost 1.81 or later now, so stock Boost no longer suffices for Ubuntu22.
+install/main/jammy: install/core install/g++ install/clang++ install/g++-12
 	add-apt-repository -y ppa:mhier/libboost-latest
-	apt-get update
+	apt-get -yq update
 	apt-get -yq install libboost1.81-all-dev
 
-# CMake
-install/cmake: install/add-apt-repository
-	wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc | apt-key add -
-	apt-add-repository "deb https://apt.kitware.com/ubuntu/ ${ubuntu_codename} main"
-	apt-get -yq update
-	apt-get -yq install cmake cmake-curses-gui
+install/main: install/main/${ubuntu_codename}
 
+# Default g++
+install/g++:
+	apt-get -yq install gcc g++ gfortran
 
-# LLVM
-install/clang-%: install/add-apt-repository
+install/g++-%:
+	apt-get -yq install gcc-$* g++-$* libstdc++-$*-dev gfortran-$*
+
+# Default clang++
+install/clang++:
+	apt-get -yq install clang libomp-dev
+
+# Specific LLVM version
+install/clang++-%:
 	wget https://apt.llvm.org/llvm-snapshot.gpg.key -O - | apt-key add -
 	add-apt-repository "deb http://apt.llvm.org/${ubuntu_codename}/ llvm-toolchain-${ubuntu_codename}-$* main"
 	apt-get -yq update
 	apt-get -yq install clang-$* libomp-$*-dev
 
-install/clang: install/clang-${clang_version}
-
+# CMake
+install/cmake:
+	wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc | apt-key add -
+	apt-add-repository "deb https://apt.kitware.com/ubuntu/ ${ubuntu_codename} main"
+	apt-get -yq update
+	apt-get -yq install cmake cmake-curses-gui
 
 # Intel
 apt-add-repository/intel-mkl:
@@ -89,7 +77,7 @@ apt-add-repository/intel-mkl:
 	apt-get -yq update
 
 download/intel-mkl:
-	apt-get install -yq --download-only ${intel_mkl}
+	apt-get -yq install --download-only ${intel_mkl}
 
 install/intel-mkl:
 	apt-get -yq install ${intel_mkl}
@@ -98,23 +86,26 @@ install/intel-mkl:
 # CUDA
 apt-add-repository/cuda:
 	wget ${cuda_repo}/cuda-ubuntu$(subst .,,${ubuntu_release}).pin -O /etc/apt/preferences.d/cuda-repository-pin-600
-	wget ${cuda_repo}/cuda-keyring_1.0-1_all.deb -O /tmp/cuda-keyring.deb
+	wget ${cuda_repo}/cuda-keyring_1.1-1_all.deb -O /tmp/cuda-keyring.deb
 	sudo dpkg -i /tmp/cuda-keyring.deb
 	rm /tmp/cuda-keyring.deb
 	#apt-key adv --fetch-keys ${cuda_repo}/7fa2af80.pub
 	add-apt-repository "deb ${cuda_repo} /"
-	apt-get update
+	apt-get -yq update
 
 download/cuda:
-	apt-get install -yq --download-only ${cuda_packages}
+	apt-get -yq install --download-only ${cuda_packages}
 
 install/cuda: download/cuda
-	apt-get install -yq ${cuda_packages}
+	apt-get -yq install ${cuda_packages}
 	rm -fr /usr/local/cuda
 	ln -s /usr/local/cuda-$(subst -,.,${cuda_tag}) /usr/local/cuda
 	rm -fr /usr/local/bin/nvcc
 	# NB /usr/local/cuda/bin/nvcc symlink breaks CMake
 	#ln -s /usr/local/cuda/bin/nvcc /usr/local/bin/nvcc
+
+install/cuda-drivers: download/cuda
+	apt-get -yq install cuda-drivers
 
 install/nvidia-container-toolkit:
 	test -x `which curl`
@@ -122,8 +113,8 @@ install/nvidia-container-toolkit:
 	curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list \
           | sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' \
           | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
-	sudo apt-get update
-	sudo apt-get install -y nvidia-container-toolkit
+	sudo apt-get -yq update
+	sudo apt-get -yq install -y nvidia-container-toolkit
 	sudo nvidia-ctk runtime configure --runtime=docker
 	sudo systemctl restart docker
 	# sudo nvidia-ctk runtime configure --runtime=containerd
@@ -140,3 +131,7 @@ libint2:
 .PHONY: install/libint2
 install/libint2: libint2
 	make -C libint2 install
+
+install/docker:
+	sudo dpkg -P snapd
+	sudo apt-get -yq install docker.io

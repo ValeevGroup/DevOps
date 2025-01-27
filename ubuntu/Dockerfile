@@ -24,7 +24,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
 # main, cmake, clang
 RUN make install/main && \
     make install/cmake && \
-    make install/clang && \
+    make install/clang++ && \
     apt-get clean
 
 # Add MKL repo, download, and install
