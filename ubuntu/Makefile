@@ -1,16 +1,21 @@
 ubuntu_codename ?= $(shell cat /etc/os-release | grep UBUNTU_CODENAME= | sed 's/UBUNTU_CODENAME=//g' )
 ubuntu_release ?= $(shell cat /etc/os-release | grep VERSION_ID= | sed 's/VERSION_ID=//g' | sed 's/"//g' )
 libint2_version ?= 2.9.0
-clang_version ?= 13
-cuda_version ?= 12.1
+#clang_version ?= 17
+cuda_version ?= 12.8
 
 export DEBIAN_FRONTEND=noninteractive
 
 ifeq ($(origin gcc_version), undefined)
   ifeq (${ubuntu_codename}, jammy)
     gcc_version = 12
+    clang_version = 15
+  else ifeq (${ubuntu_codename}, numbat)
+    gcc_version = 13
+    clang_version = 17
   else
     gcc_version = 10
+    clang_version = 13
   endif
 endif
 
@@ -27,7 +32,7 @@ cuda_packages := cuda-minimal-build-${cuda_tag} \
 # N.B. important to install devel package to make the libraries discoverable by the wfn91 linalg cmake kit
 intel_mkl := intel-oneapi-mkl-devel
 
-install/main: install/libboost-latest install/gcc
+install/main: install/libboost-${ubuntu_codename} install/gcc
 	apt-get update
 	apt-get -yq install \
           lsb-release coreutils sudo bash-completion \
@@ -56,8 +61,11 @@ install/add-apt-repository:
 	apt-get update
 	apt-get -yq install software-properties-common
 
-# VRG stack requires Boost 1.81 or later now, so stock Boost no longer suffices
-install/libboost-latest: install/add-apt-repository
+install/libboost-noble: install/add-apt-repository
+	apt-get -yq install libboost-dev
+
+# VRG stack requires Boost 1.81 or later now, so stock Boost no longer suffices for Ubuntu22.
+install/libboost-jammy: install/add-apt-repository
 	add-apt-repository -y ppa:mhier/libboost-latest
 	apt-get update
 	apt-get -yq install libboost1.81-all-dev
@@ -96,7 +104,7 @@ install/intel-mkl:
 # CUDA
 apt-add-repository/cuda:
 	wget ${cuda_repo}/cuda-ubuntu$(subst .,,${ubuntu_release}).pin -O /etc/apt/preferences.d/cuda-repository-pin-600
-	wget ${cuda_repo}/cuda-keyring_1.0-1_all.deb -O /tmp/cuda-keyring.deb
+	wget ${cuda_repo}/cuda-keyring_1.1-1_all.deb -O /tmp/cuda-keyring.deb
 	sudo dpkg -i /tmp/cuda-keyring.deb
 	rm /tmp/cuda-keyring.deb
 	#apt-key adv --fetch-keys ${cuda_repo}/7fa2af80.pub
