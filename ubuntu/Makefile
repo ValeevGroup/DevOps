@@ -44,6 +44,8 @@ install/main: install/libboost-latest install/gcc
           vim emacs-nox ccache
 
 install/docker:
+	# snapd fucks up docker socket for nvidia
+	sudo dpkg -P snapd
 	sudo apt-get install docker.io
 
 install/gcc-%:
