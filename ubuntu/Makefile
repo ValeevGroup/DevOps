@@ -62,7 +62,7 @@ install/add-apt-repository:
 	apt-get -yq install software-properties-common
 
 install/libboost-noble: install/add-apt-repository
-	apt-get -yq install libboost-dev
+	apt-get -yq install libboost-all-dev
 
 # VRG stack requires Boost 1.81 or later now, so stock Boost no longer suffices for Ubuntu22.
 install/libboost-jammy: install/add-apt-repository
