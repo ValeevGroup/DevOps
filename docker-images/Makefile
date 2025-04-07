@@ -1,6 +1,6 @@
 repo = valeevgroup
 latest ?= 24.04
-ALL = ${repo}/ubuntu\:24.04 ${repo}/ubuntu\:22.04 #${repo}/ubuntu\:20.04
+ALL = ${repo}/ubuntu\:24.04 #${repo}/ubuntu\:22.04 ${repo}/ubuntu\:20.04
 
 ${repo}/ubuntu\:%: build = docker build --build-arg ubuntuImage=ubuntu:$* -f ../ubuntu/Dockerfile ../ubuntu/
 
