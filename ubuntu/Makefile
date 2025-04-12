@@ -1,6 +1,6 @@
 ubuntu_codename ?= $(shell cat /etc/os-release | grep UBUNTU_CODENAME= | sed 's/UBUNTU_CODENAME=//g' )
 ubuntu_release ?= $(shell cat /etc/os-release | grep VERSION_ID= | sed 's/VERSION_ID=//g' | sed 's/"//g' )
-libint2_version ?= 2.10.1
+libint2_version ?= 2.10.2
 cuda_version ?= 12.6
 
 export DEBIAN_FRONTEND=noninteractive
