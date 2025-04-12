@@ -1,6 +1,7 @@
 ubuntu_codename ?= $(shell cat /etc/os-release | grep UBUNTU_CODENAME= | sed 's/UBUNTU_CODENAME=//g' )
 ubuntu_release ?= $(shell cat /etc/os-release | grep VERSION_ID= | sed 's/VERSION_ID=//g' | sed 's/"//g' )
 libint2_version ?= 2.10.2
+libxc_version ?= 6.2.0
 cuda_version ?= 12.6
 
 export DEBIAN_FRONTEND=noninteractive
@@ -132,6 +133,19 @@ libint2:
 .PHONY: install/libint2
 install/libint2: libint2
 	make -C libint2 install
+
+# Libxc
+libxc:
+	wget https://gitlab.com/libxc/libxc/-/archive/${libxc_version}/libxc-${libxc_version}.tar.bz2
+	tar xf libxc-${libxc_version}.tar.bz2
+	cd libxc-${libxc_version} && sed -i -e "s/p->info->family != XC_KINETIC/p->info->kind != XC_KINETIC/g" src/work_mgga_inc.c
+	mkdir libxc
+	cd libxc && cmake ../libxc-${libxc_version} -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
+	cd libxc && make -j16
+
+.PHONY: install/libxc
+install/libxc: libxc
+	make -C libxc install
 
 install/docker:
 	sudo dpkg -P snapd

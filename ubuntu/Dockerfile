@@ -41,3 +41,6 @@ RUN make apt-add-repository/cuda && \
 RUN make install/libint2 && \
     rm -fr /home/ValeevGroup/libint2
 
+# libxc
+RUN make install/libxc && \
+    rm -fr /home/ValeevGroup/libxc
