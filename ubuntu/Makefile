@@ -37,6 +37,8 @@ install/core:
           vim emacs-nox ccache
 
 install/main/noble: install/core install/g++ install/clang++ install/g++-14
+	add-apt-repository -y deb http://archive.ubuntu.com/ubuntu/ jammy universe
+	apt install -yq --allow-downgrades mpich/jammy libmpich-dev/jammy libscalapack-mpich-dev/jammy
 	apt-get -yq install libboost-all-dev
 
 # VRG stack requires Boost 1.81 or later now, so stock Boost no longer suffices for Ubuntu22.
