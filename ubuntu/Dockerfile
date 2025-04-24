@@ -44,3 +44,8 @@ RUN make install/libint2 && \
 # libxc
 RUN make install/libxc && \
     rm -fr /home/ValeevGroup/libxc
+
+# mpich
+RUN make install/mpich && \
+    rm -fr /home/ValeevGroup/mpich-*
+

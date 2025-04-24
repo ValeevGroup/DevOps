@@ -3,6 +3,7 @@ ubuntu_release ?= $(shell cat /etc/os-release | grep VERSION_ID= | sed 's/VERSIO
 libint2_version ?= 2.10.2
 libxc_version ?= 6.2.0
 cuda_version ?= 12.6
+mpich_version ?= 4.3.0
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -148,6 +149,16 @@ libxc:
 .PHONY: install/libxc
 install/libxc: libxc
 	make -C libxc install
+
+# MPICH
+mpich:
+	wget https://www.mpich.org/static/downloads/${mpich_version}/mpich-${mpich_version}.tar.gz
+	tar xf mpich-${mpich_version}.tar.gz
+	cd mpich-${mpich_version} && mkdir build && cd build && ../configure --prefix=/home/ValeevGroup/mpich --enable-shared --with-pm=hydra CC=gcc CXX=g++ && make -j16
+
+.PHONY: install/mpich
+install/mpich: mpich
+	make -C mpich-${mpich_version}/build install
 
 install/docker:
 	sudo dpkg -P snapd
