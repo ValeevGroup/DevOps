@@ -1,6 +1,6 @@
 ubuntu_codename ?= $(shell cat /etc/os-release | grep UBUNTU_CODENAME= | sed 's/UBUNTU_CODENAME=//g' )
 ubuntu_release ?= $(shell cat /etc/os-release | grep VERSION_ID= | sed 's/VERSION_ID=//g' | sed 's/"//g' )
-libint2_version ?= 2.10.2
+libint2_version ?= 2.11.1
 libxc_version ?= 6.2.0
 cuda_version ?= 12.6
 mpich_version ?= 4.3.0
