@@ -1,9 +1,11 @@
 ubuntu_codename ?= $(shell cat /etc/os-release | grep UBUNTU_CODENAME= | sed 's/UBUNTU_CODENAME=//g' )
 ubuntu_release ?= $(shell cat /etc/os-release | grep VERSION_ID= | sed 's/VERSION_ID=//g' | sed 's/"//g' )
-libint2_version ?= 2.11.1
-libxc_version ?= 6.2.0
+libint2_version ?= 2.11.2
+libxc_version ?= 7.0.0
 cuda_version ?= 12.6
 mpich_version ?= 4.3.0
+# to list all package versions: apt-get update && apt-cache policy cmake
+cmake_package ?= 4.1.4-0kitware1ubuntu24.04.1
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -73,7 +75,7 @@ install/cmake:
 	wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc | apt-key add -
 	apt-add-repository "deb https://apt.kitware.com/ubuntu/ ${ubuntu_codename} main"
 	apt-get -yq update
-	apt-get -yq install cmake cmake-curses-gui
+	apt-get -yq install cmake=${cmake_package} cmake-data=${cmake_package} cmake-curses-gui=${cmake_package}
 
 # Intel
 apt-add-repository/intel-mkl:
