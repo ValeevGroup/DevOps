@@ -61,14 +61,14 @@ install/g++-%:
 
 # Default clang++
 install/clang++:
-	apt-get -yq install clang libomp-dev
+	apt-get -yq install clang clang-tools libomp-dev
 
 # Specific LLVM version
 install/clang++-%:
 	wget https://apt.llvm.org/llvm-snapshot.gpg.key -O - | apt-key add -
 	add-apt-repository "deb http://apt.llvm.org/${ubuntu_codename}/ llvm-toolchain-${ubuntu_codename}-$* main"
 	apt-get -yq update
-	apt-get -yq install clang-$* libomp-$*-dev
+	apt-get -yq install clang-$* clang-tools-$* libomp-$*-dev
 
 # CMake
 install/cmake:
