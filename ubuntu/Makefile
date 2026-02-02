@@ -1,6 +1,6 @@
 ubuntu_codename ?= $(shell cat /etc/os-release | grep UBUNTU_CODENAME= | sed 's/UBUNTU_CODENAME=//g' )
 ubuntu_release ?= $(shell cat /etc/os-release | grep VERSION_ID= | sed 's/VERSION_ID=//g' | sed 's/"//g' )
-libint2_version ?= 2.12.0
+libint2_version ?= 2.13.0
 libxc_version ?= 7.0.0
 cuda_version ?= 12.6
 mpich_version ?= 4.3.0
@@ -132,7 +132,7 @@ libint2:
 	wget --no-verbose https://github.com/evaleev/libint/releases/download/v${libint2_version}/libint-${libint2_version}-mpqc4.tgz
 	tar xzf libint-${libint2_version}-mpqc4.tgz
 	mkdir libint2
-	cd libint2 && cmake ../libint-${libint2_version} -DCMAKE_BUILD_TYPE=Release -DLIBINT2_BUILD_SHARED_AND_STATIC_LIBS=ON
+	cd libint2 && cmake ../libint-${libint2_version}-mpqc4 -DCMAKE_BUILD_TYPE=Release -DLIBINT2_BUILD_SHARED_AND_STATIC_LIBS=ON
 	cd libint2 && make -j16
 
 .PHONY: install/libint2
