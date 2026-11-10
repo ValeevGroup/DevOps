@@ -1,6 +1,6 @@
 ubuntu_codename ?= $(shell cat /etc/os-release | grep UBUNTU_CODENAME= | sed 's/UBUNTU_CODENAME=//g' )
 ubuntu_release ?= $(shell cat /etc/os-release | grep VERSION_ID= | sed 's/VERSION_ID=//g' | sed 's/"//g' )
-libint2_version ?= 2.13.1
+libint2_version ?= 2.14.0
 libxc_version ?= 7.0.0
 cuda_version ?= 12.6
 mpich_version ?= 4.3.0
@@ -28,7 +28,7 @@ install/core:
           lsb-release coreutils sudo bash-completion \
           apt-transport-https software-properties-common ca-certificates gnupg \
           linux-tools-common time pciutils \
-          build-essential wget curl \
+          build-essential wget curl xz-utils \
           git make ninja-build \
           gdb valgrind \
           libeigen3-dev \
@@ -129,8 +129,8 @@ install/nvidia-container-toolkit:
 
 # Libint2
 libint2:
-	wget --no-verbose https://github.com/evaleev/libint/releases/download/v${libint2_version}/libint-${libint2_version}-mpqc4.tgz
-	tar xzf libint-${libint2_version}-mpqc4.tgz
+	wget --no-verbose https://github.com/evaleev/libint/releases/download/v${libint2_version}/libint-${libint2_version}-mpqc4.tar.xz
+	tar xJf libint-${libint2_version}-mpqc4.tar.xz
 	mkdir libint2
 	cd libint2 && cmake ../libint-${libint2_version}-mpqc4 -DCMAKE_BUILD_TYPE=Release -DLIBINT2_BUILD_SHARED_AND_STATIC_LIBS=ON
 	cd libint2 && make -j16
