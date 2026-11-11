@@ -14,6 +14,7 @@ ENV LC_ALL en_US.UTF-8
 ENV NVIDIA_VISIBLE_DEVICES all
 
 RUN mkdir -p /home/ValeevGroup/
+# N.B. changing Makefile invalidates all layers below; Libint is in libint2.mk
 COPY ./Makefile /home/ValeevGroup/
 WORKDIR /home/ValeevGroup/
 
@@ -37,15 +38,18 @@ RUN make apt-add-repository/cuda && \
     make download/cuda
 # RUN make install/cuda
 
-# libint
-RUN make install/libint2 && \
-    rm -fr /home/ValeevGroup/libint2
-
 # libxc
 RUN make install/libxc && \
-    rm -fr /home/ValeevGroup/libxc
+    rm -fr /home/ValeevGroup/libxc /home/ValeevGroup/libxc-*
 
 # mpich
 RUN make install/mpich && \
     rm -fr /home/ValeevGroup/mpich-*
 
+# libint: last, and from its own makefile, so that changing the Libint version
+# (or tarball, see libint2.mk) rebuilds only this layer; the other layers are
+# reused from the cache of the previous build (on the same machine, or pulled
+# and passed via docker build --cache-from)
+COPY ./libint2.mk /home/ValeevGroup/
+RUN make install/libint2 && \
+    make clean/libint2

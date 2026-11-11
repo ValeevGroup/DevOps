@@ -1,6 +1,5 @@
 ubuntu_codename ?= $(shell cat /etc/os-release | grep UBUNTU_CODENAME= | sed 's/UBUNTU_CODENAME=//g' )
 ubuntu_release ?= $(shell cat /etc/os-release | grep VERSION_ID= | sed 's/VERSION_ID=//g' | sed 's/"//g' )
-libint2_version ?= 2.14.0
 libxc_version ?= 7.0.0
 cuda_version ?= 12.6
 mpich_version ?= 4.3.0
@@ -8,6 +7,13 @@ mpich_version ?= 4.3.0
 cmake_package ?= 4.1.4-0kitware1ubuntu24.04.1
 
 export DEBIAN_FRONTEND=noninteractive
+
+# number of parallel build jobs
+nproc ?= $(shell nproc)
+
+# Libint2 (version, source, recipe) lives in its own file so that the Docker
+# image can install it in the last layer (see Dockerfile)
+-include $(dir $(lastword $(MAKEFILE_LIST)))libint2.mk
 
 cuda_repo = https://developer.download.nvidia.com/compute/cuda/repos/ubuntu$(subst .,,${ubuntu_release})/x86_64
 cuda_tag := $(subst .,-,${cuda_version})
@@ -127,18 +133,6 @@ install/nvidia-container-toolkit:
 	# sudo nvidia-ctk runtime configure --runtime=containerd
 	# sudo systemctl restart containerd
 
-# Libint2
-libint2:
-	wget --no-verbose https://github.com/evaleev/libint/releases/download/v${libint2_version}/libint-${libint2_version}-mpqc4.tar.xz
-	tar xJf libint-${libint2_version}-mpqc4.tar.xz
-	mkdir libint2
-	cd libint2 && cmake ../libint-${libint2_version}-mpqc4 -DCMAKE_BUILD_TYPE=Release -DLIBINT2_BUILD_SHARED_AND_STATIC_LIBS=ON
-	cd libint2 && make -j16
-
-.PHONY: install/libint2
-install/libint2: libint2
-	make -C libint2 install
-
 # Libxc
 libxc:
 	wget https://gitlab.com/libxc/libxc/-/archive/${libxc_version}/libxc-${libxc_version}.tar.bz2
@@ -146,7 +140,7 @@ libxc:
 	cd libxc-${libxc_version} && sed -i -e "s/p->info->family != XC_KINETIC/p->info->kind != XC_KINETIC/g" src/work_mgga_inc.c
 	mkdir libxc
 	cd libxc && cmake ../libxc-${libxc_version} -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
-	cd libxc && make -j16
+	cd libxc && make -j${nproc}
 
 .PHONY: install/libxc
 install/libxc: libxc
@@ -156,7 +150,7 @@ install/libxc: libxc
 mpich:
 	wget https://www.mpich.org/static/downloads/${mpich_version}/mpich-${mpich_version}.tar.gz
 	tar xf mpich-${mpich_version}.tar.gz
-	cd mpich-${mpich_version} && mkdir build && cd build && ../configure --prefix=/home/ValeevGroup/mpich --enable-shared --with-pm=hydra CC=gcc CXX=g++ && make -j16
+	cd mpich-${mpich_version} && mkdir build && cd build && ../configure --prefix=/home/ValeevGroup/mpich --enable-shared --with-pm=hydra CC=gcc CXX=g++ && make -j${nproc}
 
 .PHONY: install/mpich
 install/mpich: mpich
